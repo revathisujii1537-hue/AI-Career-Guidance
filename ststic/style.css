@@ -1,0 +1,124 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#050816,#0b1120,#1e1b4b);
+    color:white;
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:25px 80px;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+}
+
+.login-btn{
+    padding:12px 30px;
+    border:2px solid #4f46e5;
+    border-radius:30px;
+    background:transparent;
+    color:white;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.login-btn:hover{
+    background:#4f46e5;
+}
+
+.hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:70px 80px;
+}
+
+.left{
+    width:50%;
+}
+
+.left h1{
+    font-size:65px;
+    line-height:1.2;
+    margin-bottom:20px;
+    background:linear-gradient(to right,#4facfe,#c471ed);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.left p{
+    font-size:20px;
+    color:#d1d5db;
+    line-height:1.8;
+    margin-bottom:35px;
+}
+
+.start-btn{
+    padding:18px 45px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(to right,#2563eb,#9333ea);
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.start-btn:hover{
+    transform:scale(1.05);
+}
+
+.right{
+    width:40%;
+    text-align:center;
+}
+
+.right img{
+    width:380px;
+    animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-15px);}
+    100%{transform:translateY(0);}
+}
+
+.cards{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    padding:40px 80px 80px;
+}
+
+.card{
+    width:300px;
+    background:rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:30px;
+    backdrop-filter:blur(12px);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#d1d5db;
+    line-height:1.6;
+}
