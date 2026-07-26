@@ -138,6 +138,53 @@ def logout():
 
     return redirect("/")
 
+@app.route("/download/<int:id>")
+def download_report(id):
+
+    conn = sqlite3.connect("career.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM career_results WHERE id=?",
+        (id,)
+    )
+
+    report = cursor.fetchone()
+    conn.close()
+
+    if not report:
+        return "Report not found"
+
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(Paragraph("<b>AI Career Guidance Report</b>", styles["Title"]))
+    story.append(Paragraph(f"<b>Name:</b> {report[1]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Degree:</b> {report[2]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Skills:</b> {report[3]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Interest:</b> {report[4]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Dream Job:</b> {report[5]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Recommended Career:</b> {report[6]}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Career Match:</b> {report[7]}%", styles["Normal"]))
+    story.append(Paragraph("<b>AI Recommendation</b>", styles["Heading2"]))
+    story.append(Paragraph(report[8].replace("\n", "<br/>"), styles["Normal"]))
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name="Career_Report.pdf",
+        mimetype="application/pdf"
+    )
+
 @app.route("/report/<int:id>")
 def view_report(id):
 
