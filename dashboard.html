@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+<h2>🤖 AI Career Guidance</h2>
+
+<p>👤 {{ username }}</p>
+
+<a href="/logout">Logout</a>
+
+</nav>
+
+
+
+<div class="container">
+
+
+<h1>👋 Welcome, {{ username }}!</h1>
+
+<p>Your AI Career Dashboard</p>
+
+<div class="card">
+
+<h2>👤 Profile</h2>
+
+<p>
+<b>Name:</b> {{ username }}
+</p>
+
+<p>
+<b>Career Reports Generated:</b> {{ report_count }}
+</p>
+
+</div>
+
+
+
+<div class="cards">
+
+
+<div class="card">
+
+<h2>📊 Career Score</h2>
+
+{% if latest_report %}
+
+<h1>{{ latest_report[3] }}%</h1>
+
+{% else %}
+
+<h1>0%</h1>
+
+{% endif %}
+
+</div>
+
+
+
+<div class="card">
+
+<h2>💻 Skills</h2>
+
+<p>Python</p>
+<p>Java</p>
+<p>HTML</p>
+<p>CSS</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>🎯 Recommended Career</h2>
+
+{% if latest_report %}
+
+<p>{{ latest_report[2] }}</p>
+
+{% else %}
+
+<p>No Recommendation</p>
+
+{% endif %}
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="ai-form">
+
+
+<h2>🤖 AI Career Analysis</h2>
+
+
+<form action="/analyze" method="POST">
+
+
+<input type="text" 
+name="name" 
+placeholder="Your Name" 
+required>
+
+
+<input type="text" 
+name="degree" 
+placeholder="Degree (Example: B.Sc CS with AI)" 
+required>
+
+
+<input type="text" 
+name="skills" 
+placeholder="Skills (Python, Java, HTML)" 
+required>
+
+
+<input type="text" 
+name="interest" 
+placeholder="Interest (AI, Data Science)" 
+required>
+
+
+<input type="text" 
+name="dreamjob" 
+placeholder="Dream Job" 
+required>
+
+
+<button type="submit">
+Analyze with AI
+</button>
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+<div class="container">
+
+
+<div class="card">
+
+
+<h2>📂 My Career Reports</h2>
+
+
+
+{% if reports %}
+
+
+
+{% for report in reports %}
+
+
+
+<div class="report-card">
+
+
+
+    <h3>🎯 {{ report[6] }}</h3>
+
+<p>
+<b>Student:</b> {{ report[1] }}
+</p>
+
+<p>
+<b>Degree:</b> {{ report[2] }}
+</p>
+
+<p>
+<b>Career Match:</b> {{ report[7] }}%
+</p>
+
+<a href="/report/{{ report[0] }}">
+   <button>
+        📄 View Full Report
+   </button>
+</a>
+    
+
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+{% else %}
+
+
+<p>No Career Reports Found.</p>
+
+
+
+{% endif %}
+
+
+
+</div>
+
+
+</div>
+
+
+
+</body>
+
+</html>
