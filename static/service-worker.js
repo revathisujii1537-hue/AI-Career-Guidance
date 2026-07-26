@@ -2,7 +2,7 @@ const CACHE_NAME = "career-ai-v1";
 
 const urlsToCache = [
   "/",
-  "/static/dashboard.css",
+  "/static/style.css",
   "/static/icon.png"
 ];
 
