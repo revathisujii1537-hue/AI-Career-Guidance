@@ -299,12 +299,12 @@ Rules:
     ai_text = response.text
 
     try:
-    response = client.models.generate_content(
-        model="gemini-3.5-flash",
-        contents=prompt
-    )
+       response = client.models.generate_content(
+          model="gemini-3.5-flash",
+          contents=prompt
+       )
 
-    ai_text = response.text
+       ai_text = response.text
 
 except Exception:
     return """
