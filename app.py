@@ -298,6 +298,26 @@ Rules:
 
     ai_text = response.text
 
+    try:
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=prompt
+    )
+
+    ai_text = response.text
+
+except Exception:
+    return """
+    <h2>⚠️ AI Service is temporarily unavailable.</h2>
+    <p>Your Gemini API free quota has been reached or the service is busy.</p>
+    <p>Please try again after a minute.</p>
+    <br>
+    <a href="/career-dashboard">
+        <button>⬅ Back to Dashboard</button>
+    </a>
+    """
+
+
 
 
     # Extract Score
