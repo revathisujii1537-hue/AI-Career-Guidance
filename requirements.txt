@@ -2,4 +2,3 @@ Flask
 python-dotenv
 google-genai
 gunicorn
-reportlab

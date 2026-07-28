@@ -67,24 +67,38 @@ def register():
 
     if request.method == "POST":
 
-        fullname = request.form["fullname"]
-        email = request.form["email"]
-        password = request.form["password"]
+        try:
+            fullname = request.form["fullname"]
+            email = request.form["email"]
+            password = request.form["password"]
 
-        conn = sqlite3.connect("career.db")
-        cursor = conn.cursor()
+            print("REGISTER REQUEST:", fullname, email)
 
-        cursor.execute(
-            "INSERT INTO users(fullname,email,password) VALUES(?,?,?)",
-            (fullname, email, password)
-        )
+            conn = sqlite3.connect("career.db")
 
-        conn.commit()
-        conn.close()
+            import os
+            print("DB PATH:", os.path.abspath("career.db"))
 
-        return redirect("/login")
+            cursor = conn.cursor()
+
+            cursor.execute(
+                "INSERT INTO users(fullname,email,password) VALUES(?,?,?)",
+                (fullname, email, password)
+            )
+
+            conn.commit()
+            conn.close()
+
+            print("REGISTER SUCCESS")
+
+            return redirect("/login")
+
+        except Exception as e:
+            print("REGISTER ERROR:", e)
+            return f"<h2>REGISTER ERROR: {e}</h2>"
 
     return render_template("register.html")
+    
 
 @app.route("/career-dashboard")
 def dashboard():
@@ -319,112 +333,6 @@ Please try again after a minute.
         career_role = career_match.group(1).strip("- ").strip()
     else:
         career_role = "AI Engineer"
-@app.route("/analyze", methods=["POST"])
-def analyze():
-
-    name = request.form["name"]
-    degree = request.form["degree"]
-    skills = request.form["skills"]
-    interest = request.form["interest"]
-    dreamjob = request.form["dreamjob"]
-
-    prompt = f"""
-You are an AI Career Guidance Assistant.
-
-Analyze this student profile and generate a professional career report.
-
-Student Details:
-
-Name: {name}
-Degree: {degree}
-Skills: {skills}
-Interest: {interest}
-Dream Job: {dreamjob}
-
-Use this format:
-
-🎯 CAREER RECOMMENDATION
-
-Career Role:
--
-
-📊 CAREER MATCH SCORE
-
-Score:
--
-
-💡 WHY THIS CAREER
-
-• Point 1
-• Point 2
-• Point 3
-
-🛠 SKILLS TO LEARN
-
-1.
-2.
-3.
-4.
-
-📚 LEARNING ROADMAP
-
-Phase 1:
-•
-
-Phase 2:
-•
-
-Phase 3:
-•
-
-🚀 RECOMMENDED PROJECTS
-
-1.
-2.
-3.
-
-Rules:
-- Keep it short
-- Use bullet points
-- Avoid long paragraphs
-- Dashboard friendly format
-"""
-
-    try:
-        response = client.models.generate_content(
-            model="gemini-3.5-flash",
-            contents=prompt
-        )
-
-        ai_text = response.text
-
-    except Exception:
-        return """
-        <h2>⚠️ AI Service Temporarily Unavailable</h2>
-        <p>Gemini API free quota exceeded or server is busy.</p>
-        <p>Please wait a minute and try again.</p>
-        <br>
-        <a href="/career-dashboard">
-            <button>⬅ Back to Dashboard</button>
-        </a>
-        """
-
-    score_match = re.search(r'(\d+)%', ai_text)
-
-    if score_match:
-        score = score_match.group(1)
-    else:
-        score = "90"
-
-    career_match = re.search(
-        r'Career Role:\s*(.*)',
-        ai_text
-    )
-
-    if career_match:
-        career_role = career_match.group(1).strip("- ").strip()
-    else:
-        career_role = "AI Engineer"
 
     conn = sqlite3.connect("career.db")
     cursor = conn.cursor()
@@ -447,7 +355,12 @@ Rules:
     ))
 
     conn.commit()
+
+    cursor.execute("SELECT * FROM users")
+    print("USERS:", cursor.fetchall())
+
     conn.close()
+
 
     return render_template(
         "result.html",
@@ -461,7 +374,6 @@ Rules:
         career_role=career_role
     )
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-

@@ -2,10 +2,16 @@
   "name": "AI Career Guidance",
   "short_name": "Career AI",
   "start_url": "/",
+  "scope": "/"
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "icons": [
+  {
+    "src": "/static/icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }, 
     {
       "src": "/static/icon.png",
       "sizes": "512x512",
