@@ -60,15 +60,21 @@
 
 <h2>📊 Career Score</h2>
 
+<div class="circle">
+
 {% if latest_report %}
 
-<h1>{{ latest_report[3] }}%</h1>
+<span>{{ latest_report[3] }}%</span>
 
 {% else %}
 
-<h1>0%</h1>
+<span>0%</span>
 
 {% endif %}
+
+</div>
+
+<p>Career Match Score</p>
 
 </div>
 
@@ -78,22 +84,56 @@
 
 <h2>💻 Skills</h2>
 
-<p>Python</p>
-<p>Java</p>
-<p>HTML</p>
-<p>CSS</p>
+<div class="skill">
+    <p>Python</p>
+    <div class="progress">
+        <div class="progress-bar python">85%</div>
+    </div>
+</div>
+
+
+<div class="skill">
+    <p>Java</p>
+    <div class="progress">
+        <div class="progress-bar java">70%</div>
+    </div>
+</div>
+
+
+<div class="skill">
+    <p>HTML & CSS</p>
+    <div class="progress">
+        <div class="progress-bar html">80%</div>
+    </div>
+</div>
+
+
+<div class="skill">
+    <p>Machine Learning</p>
+    <div class="progress">
+        <div class="progress-bar ml">60%</div>
+    </div>
+</div>
 
 </div>
 
 
 
-<div class="card">
+<div class="card career-card">
 
 <h2>🎯 Recommended Career</h2>
 
 {% if latest_report %}
 
-<p>{{ latest_report[2] }}</p>
+<h3>{{ latest_report[2] }}</h3>
+
+<p>
+🚀 This career matches your skills and interests.
+</p>
+
+<div class="badge">
+High Demand Career
+</div>
 
 {% else %}
 
@@ -103,6 +143,29 @@
 
 </div>
 
+<div class="card roadmap">
+
+<h2>🚀 Learning Roadmap</h2>
+
+<div>
+<h3>Month 1 📚</h3>
+<p>Python, Data Analysis, SQL Basics</p>
+</div>
+
+
+<div>
+<h3>Month 2 🤖</h3>
+<p>Machine Learning, Algorithms, Projects</p>
+</div>
+
+
+<div>
+<h3>Month 3 🧠</h3>
+<p>Deep Learning, Generative AI, Deployment</p>
+</div>
+
+</div>
+
 
 
 </div>
@@ -111,7 +174,28 @@
 </div>
 
 
+<div style="text-align:center; margin:30px 0;">
 
+    <a href="/resume-analyzer">
+
+        <button style="
+            padding:15px 35px;
+            font-size:18px;
+            font-weight:bold;
+            background:linear-gradient(90deg,#2563eb,#9333ea);
+            color:white;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+        ">
+
+            📄 AI Resume Analyzer
+
+        </button>
+
+    </a>
+
+</div>
 
 <div class="ai-form">
 

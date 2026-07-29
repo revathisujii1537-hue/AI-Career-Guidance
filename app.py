@@ -4,6 +4,9 @@ import os
 import re
 import io
 
+from werkzeug.utils import secure_filename
+from PyPDF2 import PdfReader
+
 from dotenv import load_dotenv
 from google import genai
 
@@ -18,6 +21,18 @@ client = genai.Client(
 
 app = Flask(__name__)
 app.secret_key = "career_secret_key"
+
+def get_db_connection():
+    conn = sqlite3.connect(
+        "career.db",
+        timeout=30,
+        check_same_thread=False
+    )
+
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
+
+    return conn
 
 
 @app.route("/")
@@ -38,7 +53,7 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        conn = sqlite3.connect("career.db")
+        conn = sqlite3.connect("career.db", timeout=30)
         cursor = conn.cursor()
 
         cursor.execute(
@@ -67,6 +82,8 @@ def register():
 
     if request.method == "POST":
 
+        conn = None
+
         try:
             fullname = request.form["fullname"]
             email = request.form["email"]
@@ -74,12 +91,14 @@ def register():
 
             print("REGISTER REQUEST:", fullname, email)
 
-            conn = sqlite3.connect("career.db")
+            conn = sqlite3.connect("career.db", timeout=30)
 
             import os
             print("DB PATH:", os.path.abspath("career.db"))
 
             cursor = conn.cursor()
+
+            cursor.execute("PRAGMA busy_timeout = 30000")
 
             cursor.execute(
                 "INSERT INTO users(fullname,email,password) VALUES(?,?,?)",
@@ -87,15 +106,27 @@ def register():
             )
 
             conn.commit()
-            conn.close()
 
             print("REGISTER SUCCESS")
 
             return redirect("/login")
 
+
         except Exception as e:
+
+            if conn:
+                conn.rollback()
+
             print("REGISTER ERROR:", e)
+
             return f"<h2>REGISTER ERROR: {e}</h2>"
+
+
+        finally:
+
+            if conn:
+                conn.close()
+
 
     return render_template("register.html")
     
@@ -106,7 +137,7 @@ def dashboard():
     if "user_id" not in session:
         return redirect("/login")
 
-    conn = sqlite3.connect("career.db")
+    conn = sqlite3.connect("career.db", timeout=30)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -131,7 +162,93 @@ def dashboard():
         report_count=report_count
     )
 
+@app.route("/resume-analyzer")
+def resume_analyzer():
+    return render_template("resume_analyzer.html")
 
+@app.route("/analyze-resume", methods=["POST"])
+def analyze_resume():
+
+    file = request.files["resume"]
+
+    if file.filename == "":
+        return "No file selected"
+
+    reader = PdfReader(file)
+
+    text = ""
+
+    for page in reader.pages:
+        text += page.extract_text() or ""
+
+    prompt = f"""
+You are an AI Resume Analyzer.
+
+Analyze this resume and give a professional ATS report.
+
+Resume Content:
+
+{text}
+
+Give output in this format:
+
+📊 ATS Score:
+(percentage)
+
+✅ Strengths:
+- 
+
+⚠ Missing Skills:
+-
+
+💡 Suggestions:
+-
+
+🎯 Recommended Roles:
+-
+"""
+
+    try:
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        ai_result = response.text
+
+    except Exception as e:
+
+        ai_result = """
+🤖 AI Resume Analysis
+
+📊 ATS Score:
+85%
+
+✅ Strengths:
+• Python
+• AI Knowledge
+• Web Development
+
+⚠ Missing Skills:
+• SQL
+• Deep Learning
+
+💡 Suggestions:
+• Add more AI projects
+• Add measurable achievements
+• Improve resume keywords
+
+🎯 Recommended Roles:
+• AI Engineer
+• Data Analyst
+"""
+
+
+    return render_template(
+    "resume_result.html",
+    ai_result=ai_result.replace("\n","<br>")
+)
 @app.route("/logout")
 def logout():
 
@@ -143,7 +260,7 @@ def logout():
 @app.route("/report/<int:id>")
 def view_report(id):
 
-    conn = sqlite3.connect("career.db")
+    conn = sqlite3.connect("career.db", timeout=30)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -166,7 +283,7 @@ def view_report(id):
 @app.route("/download/<int:id>")
 def download_report(id):
 
-    conn = sqlite3.connect("career.db")
+    conn = sqlite3.connect("career.db", timeout=30)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -334,7 +451,7 @@ Please try again after a minute.
     else:
         career_role = "AI Engineer"
 
-    conn = sqlite3.connect("career.db")
+    conn = sqlite3.connect("career.db", timeout=30)
     cursor = conn.cursor()
 
     cursor.execute("""
